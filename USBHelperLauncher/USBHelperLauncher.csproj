@@ -2132,6 +2132,10 @@
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Tor4NET\Tor4NET\Tor4NET.csproj">
+      <Project>{7b4ccaf6-7ddf-4dc5-bd2d-bddb5ce5001c}</Project>
+      <Name>Tor4NET</Name>
+    </ProjectReference>
     <ProjectReference Include="..\USBHelperInjector\USBHelperInjector.csproj">
       <Project>{6488b1de-2b46-4ae0-9a8a-429daa2bb43e}</Project>
       <Name>USBHelperInjector</Name>

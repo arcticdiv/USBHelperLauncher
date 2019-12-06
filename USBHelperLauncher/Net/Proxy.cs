@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
@@ -34,6 +35,7 @@ namespace USBHelperLauncher.Net
         private readonly ushort port;
         private readonly TextWriter log;
         private readonly Buffer<Session> sessions;
+        private static Tor.Client torClient;
 
         public Proxy(ushort port)
         {
@@ -62,6 +64,12 @@ namespace USBHelperLauncher.Net
 
         private void FiddlerApplication_BeforeRequest(Session oS)
         {
+            if (oS.hostname.EndsWith(".onion"))
+            {
+                InitializeTorClient();
+                oS["X-OverrideGateway"] = string.Format("socks={0}:{1}", "127.0.0.1", torClient.Configuration.SocksPort);
+            }
+
             if (oS.HTTPMethodIs("CONNECT"))
             {
                 if (oS.hostname.EndsWith("wiiuusbhelper.com"))
@@ -200,6 +208,28 @@ namespace USBHelperLauncher.Net
             }
         }
 
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        private static void InitializeTorClient()
+        {
+            if (torClient != null)
+            {
+                return;
+            }
+
+            var tor = new Tor4NET.Tor(Path.Combine(Program.GetLauncherPath(), "tor"), !Environment.Is64BitOperatingSystem, "pw123456");
+
+            if (tor.CheckForUpdates().Result)
+            {
+                tor.InstallUpdates().Wait();
+            }
+
+            torClient = tor.InitializeClient(true);
+            while (!torClient.Proxy.IsRunning)
+            {
+                Thread.Sleep(10);
+            }
+        }
+
         public static bool RedirectRequest(Session oS, Endpoint endpoint, string baseUrl)
         {
             var baseUri = new UriBuilder(baseUrl).Uri;
@@ -260,6 +290,13 @@ namespace USBHelperLauncher.Net
         {
             FiddlerApplication.Shutdown();
             log.Dispose();
+            if (torClient != null)
+            {
+                try
+                {
+                    torClient.Dispose();
+                } catch { }
+            }
         }
     }
 }
