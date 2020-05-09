@@ -12,8 +12,6 @@ namespace USBHelperLauncher.Net.CloudSaves
             { CloudSaveBackendType.Dropbox, new DropboxCloudSaveBackend() }
         };
 
-        public static bool CurrentIsUSBHelper => Settings.CloudSaveBackend == CloudSaveBackendType.USBHelper;
-
         public static ICloudSaveBackend Current => Get(Settings.CloudSaveBackend);
 
         public static ICloudSaveBackend Get(CloudSaveBackendType type) => backends[type];

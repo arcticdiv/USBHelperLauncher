@@ -160,7 +160,7 @@ namespace USBHelperLauncher.Net.CloudSaves
 
             public static async Task<string> GetAccessToken()
             {
-                // avoid going through the OAuth flow twice at the same time
+                // avoid going through the OAuth flow multiple times simultaneously
                 if (currentTask == null)
                 {
                     currentTask = Task.Run(async () =>

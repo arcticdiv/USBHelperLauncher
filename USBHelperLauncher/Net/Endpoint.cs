@@ -2,7 +2,6 @@
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Reflection;
 using System.Web;
 
@@ -35,7 +34,7 @@ namespace USBHelperLauncher.Net
             return oS.HostnameIs(HostName);
         }
 
-        public static NameValueCollection GetRequestData(Session oS)
+        public NameValueCollection GetRequestData(Session oS)
         {
             NameValueCollection data = null;
             if (oS.oRequest["Content-Type"] == "application/x-www-form-urlencoded")

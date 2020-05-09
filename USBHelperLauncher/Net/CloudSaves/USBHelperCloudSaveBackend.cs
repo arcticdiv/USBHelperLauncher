@@ -109,7 +109,7 @@ namespace USBHelperLauncher.Net.CloudSaves
                 async () =>
                 {
                     var bytes = await response.Content.ReadAsByteArrayAsync();
-                    if (bytes.Length == 16 + 2 && bytes.Take(2).SequenceEqual(new byte[] { (byte)'O', (byte)'K' }))
+                    if (bytes.Length == 2+16 && bytes.Take(2).SequenceEqual(new byte[] { (byte)'O', (byte)'K' }))
                     {
                         var hash = bytes.Skip(2).ToArray();
                         var hex = BitConverter.ToString(hash).Replace("-", "");
@@ -193,7 +193,7 @@ namespace USBHelperLauncher.Net.CloudSaves
             {
                 var salted = "this is a good salt" + password;
                 var hashBytes = sha1.ComputeHash(Encoding.UTF8.GetBytes(salted));
-                return string.Concat(hashBytes.Select(b => b.ToString("x2")));
+                return BitConverter.ToString(hashBytes).Replace("-", "");
             }
         }
     }

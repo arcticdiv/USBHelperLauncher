@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using USBHelperInjector.Contracts;
 using USBHelperLauncher.Configuration;
 using USBHelperLauncher.Net.CloudSaves;
 
@@ -79,7 +80,6 @@ namespace USBHelperLauncher.Net
         [Request("/saves/list_saves.php")]
         [Request("/saves/get_save.php")]
         [Request("/saves/delete_save.php")]
-        //[Request("/saves/change_password.php")]
         public void PostCloudGeneric(Session oS)
         {
             var data = GetRequestData(oS);
@@ -222,7 +222,7 @@ namespace USBHelperLauncher.Net
 
         private void SetUSBHelperCloudAuth(string username, string password)
         {
-            if (CloudSaveBackends.CurrentIsUSBHelper)
+            if (Settings.CloudSaveBackend == CloudSaveBackendType.USBHelper)
             {
                 USBHelperCloudSaveBackend.Username = username;
                 USBHelperCloudSaveBackend.Password = password;
