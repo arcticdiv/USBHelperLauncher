@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Resources;
 using System.Windows.Forms;
 
 namespace USBHelperInjector
@@ -59,6 +60,17 @@ namespace USBHelperInjector
             }
         }
 
+        public static Type CommonResources
+        {
+            get
+            {
+                return (from type in assembly.GetTypes()
+                        from field in type.GetFields(BindingFlags.NonPublic | BindingFlags.Static)
+                        where field.FieldType == typeof(ResourceManager)
+                        select type).FirstOrDefault();
+            }
+        }
+
         public static class FrmAskTicket
         {
             private static Type _type;
@@ -86,7 +98,7 @@ namespace USBHelperInjector
                         _okButtonHandler = (from method in Type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
                                             let instructions = PatchProcessor.GetOriginalInstructions(method, out _)
                                             where instructions.Any(x => x.opcode == OpCodes.Call && ((MethodInfo)x.operand).Name == "set_FileLocation3DS")
-                                            && instructions.Any(x => x.opcode == OpCodes.Ldfld && ((FieldInfo)x.operand).FieldType.Name == "RadTextBox")
+                                            && instructions.Any(x => x.opcode == OpCodes.Ldfld && ((FieldInfo)x.operand).FieldType == TelerikUI.RadTextBox)
                                             select method).FirstOrDefault();
                     }
                     return _okButtonHandler;
@@ -103,12 +115,37 @@ namespace USBHelperInjector
                         _textBoxes = (from instruction in PatchProcessor.GetOriginalInstructions(OkButtonHandler, out _)
                                       where instruction.opcode == OpCodes.Ldfld
                                       let field = (FieldInfo)instruction.operand
-                                      where field.FieldType.Name == "RadTextBox"
+                                      where field.FieldType == TelerikUI.RadTextBox
                                       select field).ToList();
                     }
                     return _textBoxes;
                 }
             }
+        }
+
+
+        public static MethodInfo GetInitializeComponentMethod(Type type)
+        {
+            return (from constructor in type.GetConstructors(AccessTools.all)
+                    from instruction in PatchProcessor.GetOriginalInstructions(constructor, out _)
+                    where (instruction.opcode == OpCodes.Call || instruction.opcode == OpCodes.Callvirt)
+                    let target = (MethodBase)instruction.operand
+                    where target.DeclaringType == type && target.GetParameters().Length == 0
+                    select (MethodInfo)target).FirstOrDefault();
+        }
+
+
+        public static class TelerikUI
+        {
+            public static readonly Assembly Assembly = Assembly.Load("Telerik.WinControls.UI");
+
+            public static readonly Type RadMessageBox = Assembly.GetType("Telerik.WinControls.RadMessageBox");
+            public static readonly Type RadForm = Assembly.GetType("Telerik.WinControls.UI.RadForm");
+            public static readonly Type RadLabel = Assembly.GetType("Telerik.WinControls.UI.RadLabel");
+            public static readonly Type RadButton = Assembly.GetType("Telerik.WinControls.UI.RadButton");
+            public static readonly Type RadTextBox = Assembly.GetType("Telerik.WinControls.UI.RadTextBox");
+            public static readonly Type RadTextBoxControl = Assembly.GetType("Telerik.WinControls.UI.RadTextBoxControl");
+            public static readonly Type RadToggleSwitch = Assembly.GetType("Telerik.WinControls.UI.RadToggleSwitch");
         }
     }
 }

@@ -21,7 +21,7 @@ namespace USBHelperInjector.Patches
             var propEvents = typeof(Control).GetProperty("Events", BindingFlags.NonPublic | BindingFlags.Instance);
             var eventClick = typeof(Control).GetField("EventClick", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
             var okButton = (from field in ReflectionHelper.FrmAskTicket.Type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
-                            where field.FieldType.Name == "RadButton"
+                            where field.FieldType == ReflectionHelper.TelerikUI.RadButton
                             let button = (IButtonControl) field.GetValue(__instance)
                             let lst = (EventHandlerList) propEvents.GetValue(button)
                             let handler = lst[eventClick]

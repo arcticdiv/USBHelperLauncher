@@ -58,6 +58,9 @@
     <Reference Include="DotNetZip, Version=1.13.4.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
       <HintPath>..\packages\DotNetZip.1.13.4\lib\net40\DotNetZip.dll</HintPath>
     </Reference>
+    <Reference Include="Dropbox.Api, Version=4.0.0.0, Culture=neutral, PublicKeyToken=310f0e82fbb45d01, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dropbox.Api.4.10.0\lib\net45\Dropbox.Api.dll</HintPath>
+    </Reference>
     <Reference Include="FiddlerCore, Version=5.0.0.0, Culture=neutral, PublicKeyToken=67cb91587178ac5a, processorArchitecture=MSIL">
       <HintPath>..\packages\FiddlerCore.Trial.5.0.0\lib\net45\FiddlerCore.dll</HintPath>
     </Reference>
@@ -130,6 +133,11 @@
     <Compile Include="Logger.cs" />
     <Compile Include="ModuleInitInjector.cs" />
     <Compile Include="Net\CloudEndpoint.cs" />
+    <Compile Include="Net\CloudSaves\CloudSaveBackends.cs" />
+    <Compile Include="Net\CloudSaves\CloudSaveListItem.cs" />
+    <Compile Include="Net\CloudSaves\DropboxCloudSaveBackend.cs" />
+    <Compile Include="Net\CloudSaves\ICloudSaveBackend.cs" />
+    <Compile Include="Net\CloudSaves\USBHelperCloudSaveBackend.cs" />
     <Compile Include="Net\Titlekeys3DSEndpoint.cs" />
     <Compile Include="Net\WiiUShopEndpoint.cs" />
     <Compile Include="Net\SiteEndpoint.cs" />
@@ -166,6 +174,7 @@
     <Compile Include="Utils\GithubUtil.cs" />
     <Compile Include="Utils\IOUtil.cs" />
     <Compile Include="Utils\RedirectRequest.cs" />
+    <Compile Include="Utils\Result.cs" />
     <Compile Include="Utils\SourceforgeUtil.cs" />
     <Compile Include="Utils\WinUtil.cs" />
   </ItemGroup>
@@ -180,6 +189,7 @@
     <None Include="Resources\locales.json" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Resources\DropboxJSRedirect.html" />
     <None Include="emulators\meta.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

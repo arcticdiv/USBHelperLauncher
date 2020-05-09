@@ -38,6 +38,7 @@ namespace USBHelperLauncher
             channel.SetPortable(Settings.Portable);
             channel.SetForceHttp(Settings.ForceHttp);
             channel.SetFunAllowed(!Settings.NoFunAllowed);
+            channel.SetCloudSaveBackend(Settings.CloudSaveBackend);
         }
     }
 }

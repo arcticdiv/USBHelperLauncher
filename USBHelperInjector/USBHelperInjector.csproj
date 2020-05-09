@@ -52,13 +52,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contracts\CloudSaveBackendType.cs" />
     <Compile Include="Contracts\ILauncherService.cs" />
     <Compile Include="InjectorService.cs" />
     <Compile Include="Patches\Attributes\Optional.cs" />
     <Compile Include="Overrides.cs" />
     <Compile Include="Patches\CemuPathPatches.cs" />
+    <Compile Include="Patches\CloudSaveAccountPatches.cs" />
     <Compile Include="Patches\Disable3DSDownload.cs" />
     <Compile Include="Patches\Attributes\VersionSpecific.cs" />
+    <Compile Include="Patches\DisableGraphicPacksDownloadPatch.cs" />
     <Compile Include="Patches\DisableWebTabPatch.cs" />
     <Compile Include="Patches\DiscontinuedBypassPatches.cs" />
     <Compile Include="Patches\DlcTMDPatch.cs" />

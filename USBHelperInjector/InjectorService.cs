@@ -22,6 +22,7 @@ namespace USBHelperInjector
         public static bool FunAllowed { get; private set; }
         public static bool DisableWebSearchTab { get; private set; }
         public static string LocaleFile { get; private set; }
+        public static CloudSaveBackendType CloudSaveBackend { get; private set; }
 
         public static void Init()
         {
@@ -117,6 +118,11 @@ namespace USBHelperInjector
         public void SetLocaleFile(string localeFile)
         {
             LocaleFile = localeFile;
+        }
+
+        public void SetCloudSaveBackend(CloudSaveBackendType backend)
+        {
+            CloudSaveBackend = backend;
         }
     }
 }

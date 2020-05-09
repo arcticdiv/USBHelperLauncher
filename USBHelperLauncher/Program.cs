@@ -23,6 +23,7 @@ using System.Windows.Threading;
 using USBHelperInjector.Contracts;
 using USBHelperLauncher.Configuration;
 using USBHelperLauncher.Emulator;
+using USBHelperLauncher.Net.CloudSaves;
 using USBHelperLauncher.Utils;
 
 namespace USBHelperLauncher
@@ -340,12 +341,14 @@ namespace USBHelperLauncher
             }
 
             ContextMenu trayMenu = new ContextMenu();
+
             MenuItem dlEmulator = new MenuItem("Download Emulator");
             foreach (EmulatorConfiguration.Emulator emulator in Enum.GetValues(typeof(EmulatorConfiguration.Emulator)))
             {
                 EmulatorConfiguration config = EmulatorConfiguration.GetConfiguration(emulator);
                 dlEmulator.MenuItems.Add(config.GetName(), (sender, e) => OnDownloadEmulator(config));
             }
+
             MenuItem language = new MenuItem("Language") { RadioCheck = true };
             foreach (var lang in Locale.AvailableLocales)
             {
@@ -360,17 +363,46 @@ namespace USBHelperLauncher
             {
                 language.MenuItems.Add("No translations found").Enabled = false;
             }
+
             MenuItem advanced = new MenuItem("Advanced");
             advanced.MenuItems.Add("Toggle Console", OnVisibilityChange);
             advanced.MenuItems.Add("Clear Install", OnClearInstall);
             advanced.MenuItems.Add("Generate Donation Key", OnGenerateKey).Enabled = OverridePublicKey;
             advanced.MenuItems.Add("Hosts Editor", OnOpenHostsEditor);
             advanced.MenuItems.Add("Export Sessions", OnExportSessions);
+
+            MenuItem cloudSaves = new MenuItem("Cloud Saves");
+            MenuItem csSelect = new MenuItem("Select");
+            foreach (CloudSaveBackendType backend in Enum.GetValues(typeof(CloudSaveBackendType)))
+            {
+                MenuItem menuItem = null;
+                menuItem = csSelect.MenuItems.Add(backend.ToString(), (sender, e) =>
+                {
+                    Console.WriteLine($"Selected {backend}");
+                    Settings.CloudSaveBackend = backend;
+                    Settings.Save();
+                    foreach (MenuItem item in csSelect.MenuItems)
+                    {
+                        item.Checked = item == menuItem;
+                    }
+                });
+                menuItem.Checked = backend == Settings.CloudSaveBackend;
+            }
+            MenuItem csAuthorize = new MenuItem("Authorize");
+            csAuthorize.MenuItems.Add(CloudSaveBackendType.Dropbox.ToString(), async (sender, e) =>
+            {
+                var backend = (DropboxCloudSaveBackend)CloudSaveBackends.Get(CloudSaveBackendType.Dropbox);
+                await backend.Authorize();
+            });
+            cloudSaves.MenuItems.Add(csSelect);
+            cloudSaves.MenuItems.Add(csAuthorize);
+
             trayMenu.MenuItems.Add("Exit", OnExit);
             trayMenu.MenuItems.Add("Check for Updates", OnUpdateCheck);
             trayMenu.MenuItems.Add("Report Issue", async (sender, e) => await GenerateDebugLog());
             trayMenu.MenuItems.Add(dlEmulator);
             trayMenu.MenuItems.Add(language);
+            trayMenu.MenuItems.Add(cloudSaves);
             trayMenu.MenuItems.Add(advanced);
             trayIcon = new NotifyIcon
             {
@@ -379,6 +411,7 @@ namespace USBHelperLauncher
                 ContextMenu = trayMenu,
                 Visible = true
             };
+
             Application.Run();
         }
 
@@ -545,12 +578,12 @@ namespace USBHelperLauncher
             return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         }
 
-        private static string GetInstallPath()
+        internal static string GetInstallPath()
         {
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "USB_HELPER");
         }
 
-        private static string GetInstallConfPath()
+        internal static string GetInstallConfPath()
         {
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Hikari06");
         }

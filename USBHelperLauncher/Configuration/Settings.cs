@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using USBHelperInjector.Contracts;
 using USBHelperLauncher.Net;
 
 namespace USBHelperLauncher.Configuration
@@ -41,9 +42,6 @@ namespace USBHelperLauncher.Configuration
         [Setting("Launcher", false)]
         public static bool ShowHostsWarning { get; set; }
 
-        [Setting("Launcher", true)]
-        public static bool ShowCloudWarning { get; set; }
-
         [Setting("Launcher", 1000)]
         public static int SessionBufferSize { get; set; }
 
@@ -61,6 +59,15 @@ namespace USBHelperLauncher.Configuration
         {
             { typeof(ContentEndpoint).Name, "https://cdn.shiftinv.cc/wiiuusbhelper/cdn/" }
         };
+
+        [Setting("Launcher", "https://usbhelper.shiftinv.cc/cloud/")]
+        public static string CloudSaveUrl { get; set; }
+
+        [Setting("Launcher", CloudSaveBackendType.USBHelper)]
+        public static CloudSaveBackendType CloudSaveBackend { get; set; }
+
+        [Setting("Launcher")]
+        public static string DropboxToken { get; set; }
 
         [Setting("Launcher")]
         public static Dictionary<string, string> TitleKeys { get; set; } = new Dictionary<string, string>();

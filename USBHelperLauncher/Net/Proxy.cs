@@ -30,7 +30,6 @@ namespace USBHelperLauncher.Net
             new Titlekeys3DSEndpoint()
         };
 
-        private bool shownCloudWarning;
         private Buffer<Session> sessions;
         private readonly ushort port;
         private readonly TextWriter log;
@@ -203,14 +202,6 @@ namespace USBHelperLauncher.Net
             {
                 MessageBox.Show("You're using a legacy version of Wii U USB Helper.\nSupport for this version is limited which means some features may not work correctly.\nPlease update to a more recent version for better stability.", "Legacy version detected", MessageBoxButtons.OK, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
             }
-            else if (oS.HostnameIs("cloud.wiiuusbhelper.com") && oS.PathAndQuery == "/saves/login.php" && Settings.ShowCloudWarning && !shownCloudWarning)
-            {
-                shownCloudWarning = true;
-                var cloudWarning = new CheckboxDialog("The cloud save backup service is hosted by Willzor and is in no way affiliated to USBHelperLauncher. We cannot guarantee the continuity of these services and as such advise against relying on them.", "Do not show this again.", "Cloud service warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                new Thread(() => Program.ShowChildDialog(cloudWarning)).Start();
-                Settings.ShowCloudWarning = !cloudWarning.Checked;
-                Settings.Save();
-            }
         }
 
         private void Log_OnLogString(object sender, LogEventArgs e)
@@ -251,8 +242,7 @@ namespace USBHelperLauncher.Net
             }
             oS.utilCreateResponseAndBypassServer();
             oS.oResponse.headers.SetStatus(307, "Redirect");
-            var path = Regex.Replace(oS.PathAndQuery, "^/*", "");
-            var url = new Uri(baseUri, path).ToString();
+            var url = RewriteToBaseUrl(oS, baseUrl);
             oS.oResponse["Location"] = url;
             LogRequest(oS, endpoint, "Redirecting to " + url);
             return true;
@@ -277,6 +267,13 @@ namespace USBHelperLauncher.Net
                 };
             }
             return request;
+        }
+
+        public static string RewriteToBaseUrl(Session oS, string baseUrl)
+        {
+            var baseUri = new UriBuilder(baseUrl).Uri;
+            var path = Regex.Replace(oS.PathAndQuery, "^/*", "");
+            return new Uri(baseUri, path).ToString();
         }
 
         public List<string> GetConflictingHosts()
