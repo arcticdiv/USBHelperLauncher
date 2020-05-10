@@ -1,5 +1,4 @@
 ﻿using HarmonyLib;
-using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
@@ -17,25 +16,24 @@ namespace USBHelperInjector.Patches
         internal static MethodBase TargetMethod()
         {
             // v0.6.1.655: frmCloudSaving.txtPassword_TextChanging
-            Type t = (from type in ReflectionHelper.Types
-                      where typeof(Form).IsAssignableFrom(type)
-                      from field in type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
-                      where field.FieldType == ReflectionHelper.TelerikUI.RadToggleSwitch
-                      select type).FirstOrDefault();
-            return (from method in t.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
+            return (from type in ReflectionHelper.Types
+                    where typeof(Form).IsAssignableFrom(type)
+                       && type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+                              .Any(f => f.FieldType == ReflectionHelper.TelerikUI.RadToggleSwitch)
+                    from method in type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
                     let parameters = method.GetParameters().Select(p => p.ParameterType).ToList()
-                    where parameters.Count == 2
-                    && parameters[1].Name == "TextChangingEventArgs"
+                    where parameters.Count == 2 && parameters[1].Name == "TextChangingEventArgs"
                     select method).FirstOrDefault();
         }
 
         static bool Prefix(Control __0, CancelEventArgs __1)
         {
-            string newValue = (string)__1.GetType().GetProperty("NewValue").GetValue(__1);
-            Console.WriteLine("new: " + newValue);
+            var newValue = (string)AccessTools.Property(__1.GetType(), "NewValue").GetValue(__1);
             if (__0.GetType() == ReflectionHelper.TelerikUI.RadTextBox && !Regex.IsMatch(newValue, "^[A-Za-z0-9_-]{0,63}$")
                 || __0.GetType() == ReflectionHelper.TelerikUI.RadTextBoxControl && newValue.Contains(" "))
+            {
                 __1.Cancel = true;
+            }
             return false;
         }
     }

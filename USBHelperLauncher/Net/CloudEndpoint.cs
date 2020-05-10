@@ -16,17 +16,18 @@ namespace USBHelperLauncher.Net
     {
         public CloudEndpoint() : base("cloud.wiiuusbhelper.com") { }
 
-        private static Lazy<HttpClient> _client = new Lazy<HttpClient>(() =>
+        private static readonly Lazy<HttpClient> _client = new Lazy<HttpClient>(() =>
             new HttpClient(new HttpClientHandler()
             {
                 Proxy = Program.Proxy.GetWebProxy(),
                 UseProxy = true
             })
         );
+
         internal static HttpClient Client => _client.Value;
 
-        private static readonly string saveHashesPath = Path.Combine(Program.GetInstallPath(), "saveHashes");
-        private byte[] currentSaveData;
+        private static readonly string _saveHashesPath = Path.Combine(Program.GetInstallPath(), "saveHashes");
+        private byte[] _currentSaveData;
 
         [Request("/mods/list_mods.php")]
         public void GetMods(Session oS)
@@ -38,6 +39,7 @@ namespace USBHelperLauncher.Net
         }
 
         #region Community Saves
+
         [Request("/communitysaves/cdn/*")]
         [Request("/communitysaves/list.php")]
         public void GetCommunityGeneric(Session oS)
@@ -50,32 +52,33 @@ namespace USBHelperLauncher.Net
         {
             var data = GetRequestData(oS);
 
-            MultipartFormDataContent content = new MultipartFormDataContent
+            var content = new MultipartFormDataContent
             {
-                { new ByteArrayContent(currentSaveData), "file", "data.zip" },
+                { new ByteArrayContent(_currentSaveData), "file", "data.zip" },
                 { new StringContent(data.Get("titleid")), "titleid" },
                 { new StringContent(data.Get("description")), "description" }
             };
-            currentSaveData = null;
+            _currentSaveData = null;
 
             var response = Client.PostAsync(Proxy.RewriteToBaseUrl(oS, Settings.CloudSaveUrl), content).Result;
             oS.oResponse.headers.SetStatus((int)response.StatusCode, response.ReasonPhrase);
             oS.ResponseBody = response.Content.ReadAsByteArrayAsync().Result;
-            Proxy.LogRequest(oS, this, "Uploaded communitysave data for title ID " + data.Get("titleid"));
+            Proxy.LogRequest(oS, this, "Uploaded community save data for title ID " + data.Get("titleid"));
         }
 
         [Request("/communitysaves/upload.php")]
         public void HandleCommunitySaveUpload(Session oS)
         {
-            currentSaveData = ReadFormData(oS, out var _);
+            _currentSaveData = ReadFormData(oS, out var _);
             oS.utilCreateResponseAndBypassServer();
             oS.utilSetResponseBody("00000000000000000000000000000000");
-            Proxy.LogRequest(oS, this, "Stored communitysave data temporarily");
+            Proxy.LogRequest(oS, this, "Stored community save data temporarily");
         }
 
         #endregion
 
         #region Cloud Saves
+
         [Request("/saves/login.php")]
         [Request("/saves/list_saves.php")]
         [Request("/saves/get_save.php")]
@@ -95,33 +98,25 @@ namespace USBHelperLauncher.Net
                     {
                         case "/saves/login.php":
                         {
-                            var result = await CloudSaveBackends.Current.Login();
-                            result.EnsureSuccess();
+                            await CloudSaveBackends.Current.Login();
                             oS.utilSetResponseBody("OK");
                             break;
                         }
                         case "/saves/list_saves.php":
                         {
-                            var result = await CloudSaveBackends.Current.ListSaves();
-                            JArray arr = new JArray();
-                            if (result.IsSuccess)
+                            var list = await CloudSaveBackends.Current.ListSaves();
+                            var arr = new JArray();
+                            foreach (var item in list)
                             {
-                                foreach (var item in result.Value)
+                                arr.Add(new JObject()
                                 {
-                                    arr.Add(new JObject()
-                                    {
-                                        { "md5", item.Hash },
-                                        { "titleid", item.TitleId },
-                                        { "date", item.Timestamp },
-                                        { "size", item.Size }
-                                    });
-                                }
+                                    { "md5", item.Hash },
+                                    { "titleid", item.TitleId },
+                                    { "date", item.Timestamp },
+                                    { "size", item.Size }
+                                });
                             }
-                            else
-                            {
-                                HandleError(oS, result.ErrorData);
-                            }
-                            oS.utilSetResponseBody(arr.ToString());  // always send valid JSON
+                            oS.utilSetResponseBody(arr.ToString()); // always send valid JSON
                             break;
                         }
                         case "/saves/get_save.php":
@@ -129,40 +124,35 @@ namespace USBHelperLauncher.Net
                             var titleId = data["titleid"];
                             if (string.IsNullOrEmpty(data["hash"]))
                             {
-                                var result = await CloudSaveBackends.Current.GetSave(titleId);
-                                result.EnsureSuccess();
-                                oS.ResponseBody = result.Value;
+                                var saveData = await CloudSaveBackends.Current.GetSave(titleId);
+                                oS.ResponseBody = saveData;
                             }
                             else
                             {
-                                var result = await CloudSaveBackends.Current.GetSaveHash(titleId);
-                                result.EnsureSuccess();
-                                var text = "";
+                                var hash = await CloudSaveBackends.Current.GetSaveHash(titleId);
                                 // If the server returned a hash, compare to saved hash
-                                if (result.Value.Length > 0)
+                                if (hash.Length > 0)
                                 {
-                                    text = result.Value;
-                                    var hashPath = Path.Combine(saveHashesPath, data["titleid"]);
-                                    if (File.Exists(hashPath) && text == File.ReadAllText(hashPath))
+                                    var hashPath = Path.Combine(_saveHashesPath, data["titleid"]);
+                                    if (File.Exists(hashPath) && hash == File.ReadAllText(hashPath))
                                     {
                                         // respond with empty hash
-                                        text = "";
+                                        hash = "";
                                     }
                                     else
                                     {
-                                        Directory.CreateDirectory(saveHashesPath);
-                                        File.WriteAllText(hashPath, text);
+                                        Directory.CreateDirectory(_saveHashesPath);
+                                        File.WriteAllText(hashPath, hash);
                                     }
                                 }
-                                oS.utilSetResponseBody(text);
+                                oS.utilSetResponseBody(hash);
                             }
                             break;
                         }
                         case "/saves/delete_save.php":
                         {
                             var titleId = data["titleid"];
-                            var result = await CloudSaveBackends.Current.DeleteSave(titleId);
-                            result.EnsureSuccess();
+                            await CloudSaveBackends.Current.DeleteSave(titleId);
                             oS.utilSetResponseBody("");
                             break;
                         }
@@ -182,7 +172,7 @@ namespace USBHelperLauncher.Net
         [Request("/saves/upload_save*.php")]
         public void UploadCloudSave(Session oS)
         {
-            var saveData = ReadFormData(oS, out string filename);
+            var saveData = ReadFormData(oS, out var filename);
             if (oS.PathAndQuery == "/saves/upload_save_b64.php")
             {
                 oS.PathAndQuery = oS.PathAndQuery.Replace("_b64", "");
@@ -192,19 +182,19 @@ namespace USBHelperLauncher.Net
 
             SetUSBHelperCloudAuth(parts[0], parts[1]);
             oS.utilCreateResponseAndBypassServer();
-            var result = CloudSaveBackends.Current.UploadSave(parts[2], saveData).Result;
-            if (result.IsSuccess)
+            try
             {
-                Directory.CreateDirectory(saveHashesPath);
-                var hashPath = Path.Combine(saveHashesPath, parts[2]);
-                File.WriteAllText(hashPath, result.Value);
+                var hash = CloudSaveBackends.Current.UploadSave(parts[2], saveData).Result;
+                Directory.CreateDirectory(_saveHashesPath);
+                var hashPath = Path.Combine(_saveHashesPath, parts[2]);
+                File.WriteAllText(hashPath, hash);
 
                 oS.utilSetResponseBody("OK");
-                Proxy.LogRequest(oS, this, $"Uploaded cloudsave data for title ID {parts[2]}");
+                Proxy.LogRequest(oS, this, $"Uploaded cloud save data for title ID {parts[2]}");
             }
-            else
+            catch (Exception e)
             {
-                HandleError(oS, result.ErrorData);
+                HandleError(oS, e.ToString());
             }
         }
 
@@ -220,14 +210,16 @@ namespace USBHelperLauncher.Net
             Proxy.LogRequest(oS, this, $"Error in {oS.PathAndQuery} handler:\n{errorText}");
         }
 
-        private void SetUSBHelperCloudAuth(string username, string password)
+        private static void SetUSBHelperCloudAuth(string username, string password)
         {
-            if (Settings.CloudSaveBackend == CloudSaveBackendType.USBHelper)
+            if (Settings.CloudSaveBackend != CloudSaveBackendType.USBHelper)
             {
-                USBHelperCloudSaveBackend.Username = username;
-                USBHelperCloudSaveBackend.Password = password;
+                return;
             }
+            USBHelperCloudSaveBackend.Username = username;
+            USBHelperCloudSaveBackend.Password = password;
         }
+
         #endregion
 
         private static byte[] ReadFormData(Session oS, out string filename)
@@ -237,7 +229,7 @@ namespace USBHelperLauncher.Net
             var boundaryBytes = Encoding.UTF8.GetBytes(boundary);
 
             // search start boundary
-            byte[] data = oS.RequestBody;
+            var data = oS.RequestBody;
             var start = SearchBytes(data, boundaryBytes) + boundaryBytes.Length;
 
             // look for 'filename="<str>"'
@@ -248,11 +240,11 @@ namespace USBHelperLauncher.Net
 
             // look for next \r\n\r\n
             var dataStart = SearchBytes(data, new byte[] { 0xD, 0xA, 0xD, 0xA }, start) + 4;
-            // search end boundary (take final linebreak into account by subtracting 2)
+            // search end boundary (take final line break into account by subtracting 2)
             var end = SearchBytes(data, boundaryBytes, dataStart) - 2;
             var dataLength = end - dataStart;
 
-            byte[] newData = new byte[dataLength];
+            var newData = new byte[dataLength];
             Array.Copy(data, dataStart, newData, 0, dataLength);
             return newData;
         }
@@ -266,9 +258,15 @@ namespace USBHelperLauncher.Net
                 var k = 0;
                 for (; k < len; k++)
                 {
-                    if (needle[k] != haystack[i + k]) break;
+                    if (needle[k] != haystack[i + k])
+                    {
+                        break;
+                    }
                 }
-                if (k == len) return i;
+                if (k == len)
+                {
+                    return i;
+                }
             }
             throw new FormatException("Pattern not found");
         }

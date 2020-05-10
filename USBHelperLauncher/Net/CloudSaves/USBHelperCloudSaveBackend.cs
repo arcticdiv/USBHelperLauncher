@@ -7,95 +7,79 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using USBHelperLauncher.Configuration;
-using USBHelperLauncher.Utils;
 
 namespace USBHelperLauncher.Net.CloudSaves
 {
+    class USBHelperCloudSaveException : Exception
+    {
+        public USBHelperCloudSaveException(string message) : base(message) { }
+    }
+
     class USBHelperCloudSaveBackend : ICloudSaveBackend
     {
-        private static HttpClient client => CloudEndpoint.Client;
+        private static HttpClient Client => CloudEndpoint.Client;
 
         public static string Username, Password;
 
 
-        public async Task<Result> Login()
+        public async Task Login()
         {
             var response = await Post("login.php");
-            return await CheckResponseText(
-                response,
-                (text) => text == "OK" ? Result.Success() : Result.Failure(text),
-                (err) => Result.Failure(err)
-            );
+            var text = await response.Content.ReadAsStringAsync();
+            if (text != "OK")
+            {
+                throw new USBHelperCloudSaveException(text);
+            }
         }
 
-        public async Task<Result<List<CloudSaveListItem>>> ListSaves()
+        public async Task<List<CloudSaveListItem>> ListSaves()
         {
             var response = await Post("list_saves.php");
-            return await CheckResponseText(
-                response,
-                (text) =>
-                {
-                    var jsonList = JArray.Parse(text);
-                    var list = new List<CloudSaveListItem>();
-                    foreach (JObject obj in jsonList)
-                    {
-                        list.Add(new CloudSaveListItem(
-                            obj.Value<string>("md5"),
-                            obj.Value<string>("titleid"),
-                            obj.Value<ulong>("date"),
-                            obj.Value<ulong>("size")
-                        ));
-                    }
-                    return Result<List<CloudSaveListItem>>.Success(list);
-                },
-                (err) => Result<List<CloudSaveListItem>>.Failure(err)
-            );
+            var text = await response.Content.ReadAsStringAsync();
+            var jsonList = JArray.Parse(text);
+            return (from obj in jsonList
+                    select new CloudSaveListItem(
+                        obj.Value<string>("md5"),
+                        obj.Value<string>("titleid"),
+                        obj.Value<ulong>("date"),
+                        obj.Value<ulong>("size")
+                    )).ToList();
         }
 
-        public async Task<Result<string>> GetSaveHash(string titleId)
+        public async Task<string> GetSaveHash(string titleId)
         {
             var response = await Post("get_save.php", new Dictionary<string, string>()
             {
                 { "titleid", titleId },
                 { "hash", "true" }
             });
-            return await CheckResponse(
-                response,
-                async () =>
-                {
-                    var bytes = await response.Content.ReadAsByteArrayAsync();
-                    if (bytes.Length == 0)
-                    {
-                        return Result<string>.Success("");
-                    }
-                    var str = Encoding.ASCII.GetString(bytes);
-                    if (bytes.Length == 16 && !str.StartsWith("Error"))
-                    {
-                        var hex = BitConverter.ToString(bytes).Replace("-", "");
-                        return Result<string>.Success(hex);
-                    }
-                    return Result<string>.Failure(str);
-                },
-                (err) => Result<string>.Failure(err)
-            );
+            var bytes = await response.Content.ReadAsByteArrayAsync();
+            if (bytes.Length == 0)
+            {
+                return "";
+            }
+
+            var str = Encoding.ASCII.GetString(bytes);
+            if (bytes.Length != 16 || str.StartsWith("Error"))
+            {
+                throw new USBHelperCloudSaveException(str);
+            }
+
+            return BitConverter.ToString(bytes).Replace("-", "");
         }
 
-        public async Task<Result<byte[]>> GetSave(string titleId)
+        public async Task<byte[]> GetSave(string titleId)
         {
             var response = await Post("get_save.php", new Dictionary<string, string>()
             {
                 { "titleid", titleId }
             });
-            return await CheckResponse(
-                response,
-                async () => Result<byte[]>.Success(await response.Content.ReadAsByteArrayAsync()),
-                (err) => Result<byte[]>.Failure(err)
-            );
+            return await response.Content.ReadAsByteArrayAsync();
         }
 
-        public async Task<Result<string>> UploadSave(string titleId, byte[] saveData)
+        public async Task<string> UploadSave(string titleId, byte[] saveData)
         {
-            MultipartFormDataContent content = new MultipartFormDataContent
+            var content = new MultipartFormDataContent
             {
                 { new StringContent(Username), "username" },
                 { new StringContent(HashPassword(Password)), "password" },
@@ -103,35 +87,28 @@ namespace USBHelperLauncher.Net.CloudSaves
                 { new ByteArrayContent(saveData), "file", "data.zip" }
             };
 
-            var response = await client.PostAsync(GetUri("upload_save.php"), content);
-            return await CheckResponse(
-                response,
-                async () =>
-                {
-                    var bytes = await response.Content.ReadAsByteArrayAsync();
-                    if (bytes.Length == 2+16 && bytes.Take(2).SequenceEqual(new byte[] { (byte)'O', (byte)'K' }))
-                    {
-                        var hash = bytes.Skip(2).ToArray();
-                        var hex = BitConverter.ToString(hash).Replace("-", "");
-                        return Result<string>.Success(hex);
-                    }
-                    return Result<string>.Failure(Encoding.ASCII.GetString(bytes));
-                },
-                (err) => Result<string>.Failure(err)
-            );
+            var response = await Client.PostAsync(GetUri("upload_save.php"), content);
+            var bytes = await response.Content.ReadAsByteArrayAsync();
+            if (bytes.Length != 2 + 16 || !bytes.Take(2).SequenceEqual(new[] { (byte)'O', (byte)'K' }))
+            {
+                throw new USBHelperCloudSaveException(Encoding.UTF8.GetString(bytes));
+            }
+
+            var hash = bytes.Skip(2).ToArray();
+            return BitConverter.ToString(hash).Replace("-", "");
         }
 
-        public async Task<Result> DeleteSave(string titleId)
+        public async Task DeleteSave(string titleId)
         {
             var response = await Post("delete_save.php", new Dictionary<string, string>()
             {
                 { "titleid", titleId }
             });
-            return await CheckResponseText(
-                response,
-                (text) => text == "OK" ? Result.Success() : Result.Failure(text),
-                (err) => Result.Failure(err)
-            );
+            var text = await response.Content.ReadAsStringAsync();
+            if (text != "OK")
+            {
+                throw new USBHelperCloudSaveException(text);
+            }
         }
 
 
@@ -147,32 +124,12 @@ namespace USBHelperLauncher.Net.CloudSaves
                 postParams = postParams.Union(data);
             }
 
-            return await client.PostAsync(GetUri(path), new FormUrlEncodedContent(postParams));
-        }
-
-        private static async Task<T> CheckResponse<T>(
-            HttpResponseMessage response,
-            Func<Task<T>> responseOk,
-            Func<string, T> responseUnsuccessful
-        )
-        {
+            var response = await Client.PostAsync(GetUri(path), new FormUrlEncodedContent(postParams));
             if (!response.IsSuccessStatusCode)
             {
-                return responseUnsuccessful(await GetErrorString(response));
+                throw new HttpRequestException(await GetErrorString(response));
             }
-            return await responseOk();
-        }
-        private static async Task<T> CheckResponseText<T>(
-            HttpResponseMessage response,
-            Func<string, T> responseOk,
-            Func<string, T> responseUnsuccessful
-        )
-        {
-            return await CheckResponse(
-                response,
-                async () => responseOk(await response.Content.ReadAsStringAsync()),
-                responseUnsuccessful
-            );
+            return response;
         }
 
         private static async Task<string> GetErrorString(HttpResponseMessage response)

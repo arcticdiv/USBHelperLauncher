@@ -174,7 +174,6 @@
     <Compile Include="Utils\GithubUtil.cs" />
     <Compile Include="Utils\IOUtil.cs" />
     <Compile Include="Utils\RedirectRequest.cs" />
-    <Compile Include="Utils\Result.cs" />
     <Compile Include="Utils\SourceforgeUtil.cs" />
     <Compile Include="Utils\WinUtil.cs" />
   </ItemGroup>
