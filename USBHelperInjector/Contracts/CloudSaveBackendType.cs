@@ -8,9 +8,9 @@ namespace USBHelperInjector.Contracts
         Dropbox
     }
 
-    static class CloudSaveBackendTypeStrings
+    public static class CloudSaveBackendTypeStrings
     {
-        public static string ToString(this CloudSaveBackendType backend)
+        public static string Description(this CloudSaveBackendType backend)
         {
             switch (backend)
             {

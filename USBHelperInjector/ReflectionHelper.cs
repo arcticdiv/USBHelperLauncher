@@ -71,6 +71,18 @@ namespace USBHelperInjector
             }
         }
 
+        public static Type FrmCloudSaving
+        {
+            get
+            {
+                return (from type in Types
+                        where typeof(Form).IsAssignableFrom(type)
+                           && type.GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+                                  .Any(f => f.FieldType == TelerikUI.RadToggleSwitch)
+                        select type).FirstOrDefault();
+            }
+        }
+
         public static class FrmAskTicket
         {
             private static Type _type;
@@ -143,6 +155,7 @@ namespace USBHelperInjector
             public static readonly Type RadForm = Assembly.GetType("Telerik.WinControls.UI.RadForm");
             public static readonly Type RadLabel = Assembly.GetType("Telerik.WinControls.UI.RadLabel");
             public static readonly Type RadButton = Assembly.GetType("Telerik.WinControls.UI.RadButton");
+            public static readonly Type RadGroupBox = Assembly.GetType("Telerik.WinControls.UI.RadGroupBox");
             public static readonly Type RadTextBox = Assembly.GetType("Telerik.WinControls.UI.RadTextBox");
             public static readonly Type RadTextBoxControl = Assembly.GetType("Telerik.WinControls.UI.RadTextBoxControl");
             public static readonly Type RadToggleSwitch = Assembly.GetType("Telerik.WinControls.UI.RadToggleSwitch");

@@ -375,21 +375,20 @@ namespace USBHelperLauncher
             MenuItem csSelect = new MenuItem("Select");
             foreach (CloudSaveBackendType backend in Enum.GetValues(typeof(CloudSaveBackendType)))
             {
-                MenuItem menuItem = null;
-                menuItem = csSelect.MenuItems.Add(backend.ToString(), (sender, e) =>
+                csSelect.MenuItems.Add(backend.Description(), (sender, e) =>
                 {
-                    Console.WriteLine($"Selected {backend}");
                     Settings.CloudSaveBackend = backend;
                     Settings.Save();
+                    Console.WriteLine($"Selected {backend} cloud save backend");
+                    LauncherService.Channel.SetCloudSaveBackend(backend);
                     foreach (MenuItem item in csSelect.MenuItems)
                     {
-                        item.Checked = item == menuItem;
+                        item.Checked = item == sender;
                     }
-                });
-                menuItem.Checked = backend == Settings.CloudSaveBackend;
+                }).Checked = backend == Settings.CloudSaveBackend;
             }
             MenuItem csAuthorize = new MenuItem("Authorize");
-            csAuthorize.MenuItems.Add(CloudSaveBackendType.Dropbox.ToString(), async (sender, e) =>
+            csAuthorize.MenuItems.Add(CloudSaveBackendType.Dropbox.Description(), async (sender, e) =>
             {
                 var backend = (DropboxCloudSaveBackend)CloudSaveBackends.Get(CloudSaveBackendType.Dropbox);
                 await backend.Authorize();
