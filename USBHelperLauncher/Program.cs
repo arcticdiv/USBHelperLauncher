@@ -385,6 +385,11 @@ namespace USBHelperLauncher
                     {
                         item.Checked = item == sender;
                     }
+                    MessageBox.Show(
+                        "Wii U USB Helper will always overwrite local save data with save data from the cloud (provided that save data has previously been uploaded).\nIf you've just switched back to a cloud save backend you've used before, you might want to delete the cloud saves first before launching a game, as your save files might get overwritten with older ones otherwise.",
+                        "Warning",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning
+                    );
                 }).Checked = backend == Settings.CloudSaveBackend;
             }
             MenuItem csAuthorize = new MenuItem("Authorize");
