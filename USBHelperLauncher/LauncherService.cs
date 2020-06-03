@@ -34,8 +34,9 @@ namespace USBHelperLauncher
             Channel.SetDownloaderMaxRetries(Settings.MaxRetries);
             Channel.SetDownloaderRetryDelay(Settings.DelayBetweenRetries);
             Channel.SetDisableOptionalPatches(Settings.DisableOptionalPatches);
-            Channel.SetDisableWebSearchTab(Settings.DisableWebSearchTab);
+            Channel.SetDisableTabs(Settings.DisableTabs);
             Channel.SetLocaleFile(Program.Locale.LocaleFile);
+            Channel.SetEshopRegion(Program.Locale.ChosenLocale.Split('-')[1]);
             Channel.SetHelperVersion(Program.HelperVersion);
             Channel.SetPortable(Settings.Portable);
             Channel.SetForceHttp(Settings.ForceHttp);

@@ -132,6 +132,7 @@
     <Compile Include="LocaleProvider.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="ModuleInitInjector.cs" />
+    <Compile Include="Utils\MOTD.cs" />
     <Compile Include="Net\CloudEndpoint.cs" />
     <Compile Include="Net\CloudSaves\CloudSaveBackends.cs" />
     <Compile Include="Net\CloudSaves\CloudSaveListItem.cs" />

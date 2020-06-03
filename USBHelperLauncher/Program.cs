@@ -121,6 +121,15 @@ namespace USBHelperLauncher
                 Settings.Save();
             }
 
+            try
+            {
+                MOTD.DisplayIfNeeded(Locale.ChosenLocale);
+            }
+            catch (WebException e)
+            {
+                Logger.WriteLine("Could not load message of the day: {0}", e.Message);
+            }
+
             var certs = new DirectoryInfo("certs");
             if (certs.Exists)
             {
@@ -653,6 +662,7 @@ namespace USBHelperLauncher
             if (Control.ModifierKeys == Keys.Shift)
             {
                 await toFile();
+                return;
             }
 
             try

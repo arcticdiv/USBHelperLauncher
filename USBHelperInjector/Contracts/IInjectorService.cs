@@ -42,10 +42,13 @@ namespace USBHelperInjector.Contracts
         void SetFunAllowed(bool funAllowed);
 
         [OperationContract]
-        void SetDisableWebSearchTab(bool disableWebSearchTab);
+        void SetDisableTabs(string[] disableTabs);
 
         [OperationContract]
         void SetLocaleFile(string localeFile);
+
+        [OperationContract]
+        void SetEshopRegion(string eshopRegion);
 
         [OperationContract]
         void SetCloudSaveBackend(CloudSaveBackendType backend);

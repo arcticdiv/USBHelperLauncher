@@ -54,6 +54,9 @@ namespace USBHelperLauncher.Configuration
         [Setting("Launcher")]
         public static string TranslationsBuild { get; set; }
 
+        [Setting("Launcher")]
+        public static string LastMessage { get; set; }
+
         [Setting("Launcher", forgetful: true)]
         public static Dictionary<string, string> EndpointFallbacks { get; set; } = new Dictionary<string, string>()
         {
@@ -75,8 +78,8 @@ namespace USBHelperLauncher.Configuration
         [Setting("Injector", false)]
         public static bool DisableOptionalPatches { get; set; }
 
-        [Setting("Injector", true)]
-        public static bool DisableWebSearchTab { get; set; }
+        [Setting("Injector", new string[] { "toolWeb", "toolMods", "toolChat" })]
+        public static string[] DisableTabs { get; set; }
 
         [Setting("Injector", 5)]
         public static int MaxRetries { get; set; }
