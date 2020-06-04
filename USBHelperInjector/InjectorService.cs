@@ -23,7 +23,7 @@ namespace USBHelperInjector
         public static string[] DisableTabs { get; private set; }
         public static string LocaleFile { get; private set; }
         public static string EshopRegion { get; private set; }
-        public static CloudSaveBackendType CloudSaveBackend { get; private set; }
+        public static CloudSaveBackendType CloudSaveBackend { get; set; }
 
         public static void Init()
         {

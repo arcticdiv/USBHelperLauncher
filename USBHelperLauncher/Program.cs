@@ -380,42 +380,11 @@ namespace USBHelperLauncher
             advanced.MenuItems.Add("Hosts Editor", OnOpenHostsEditor);
             advanced.MenuItems.Add("Export Sessions", OnExportSessions);
 
-            MenuItem cloudSaves = new MenuItem("Cloud Saves");
-            MenuItem csSelect = new MenuItem("Select");
-            foreach (CloudSaveBackendType backend in Enum.GetValues(typeof(CloudSaveBackendType)))
-            {
-                csSelect.MenuItems.Add(backend.Description(), (sender, e) =>
-                {
-                    Settings.CloudSaveBackend = backend;
-                    Settings.Save();
-                    Console.WriteLine($"Selected {backend} cloud save backend");
-                    LauncherService.Channel.SetCloudSaveBackend(backend);
-                    foreach (MenuItem item in csSelect.MenuItems)
-                    {
-                        item.Checked = item == sender;
-                    }
-                    MessageBox.Show(
-                        "Wii U USB Helper will always overwrite local save data with save data from the cloud (provided that save data has previously been uploaded).\nIf you've just switched back to a cloud save backend you've used before, you might want to delete the cloud saves first before launching a game, as your save files might get overwritten with older ones otherwise.",
-                        "Warning",
-                        MessageBoxButtons.OK, MessageBoxIcon.Warning
-                    );
-                }).Checked = backend == Settings.CloudSaveBackend;
-            }
-            MenuItem csAuthorize = new MenuItem("Authorize");
-            csAuthorize.MenuItems.Add(CloudSaveBackendType.Dropbox.Description(), async (sender, e) =>
-            {
-                var backend = (DropboxCloudSaveBackend)CloudSaveBackends.Get(CloudSaveBackendType.Dropbox);
-                await backend.Authorize();
-            });
-            cloudSaves.MenuItems.Add(csSelect);
-            cloudSaves.MenuItems.Add(csAuthorize);
-
             trayMenu.MenuItems.Add("Exit", OnExit);
             trayMenu.MenuItems.Add("Check for Updates", OnUpdateCheck);
             trayMenu.MenuItems.Add("Report Issue", async (sender, e) => await GenerateDebugLog());
             trayMenu.MenuItems.Add(dlEmulator);
             trayMenu.MenuItems.Add(language);
-            trayMenu.MenuItems.Add(cloudSaves);
             trayMenu.MenuItems.Add(advanced);
             trayIcon = new NotifyIcon
             {

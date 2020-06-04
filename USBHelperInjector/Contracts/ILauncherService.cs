@@ -11,5 +11,8 @@ namespace USBHelperInjector.Contracts
 
         [OperationContract]
         void SendInjectorSettings();
+
+        [OperationContract]
+        void SetCloudSaveBackend(CloudSaveBackendType backend);
     }
 }

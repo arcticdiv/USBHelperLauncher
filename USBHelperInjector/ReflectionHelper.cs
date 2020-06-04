@@ -101,6 +101,8 @@ namespace USBHelperInjector
             public static readonly Type RadTextBox = Assembly.GetType("Telerik.WinControls.UI.RadTextBox");
             public static readonly Type RadTextBoxControl = Assembly.GetType("Telerik.WinControls.UI.RadTextBoxControl");
             public static readonly Type RadToggleSwitch = Assembly.GetType("Telerik.WinControls.UI.RadToggleSwitch");
+            public static readonly Type RadDropDownList = Assembly.GetType("Telerik.WinControls.UI.RadDropDownList");
+            public static readonly Type RadListDataItem = Assembly.GetType("Telerik.WinControls.UI.RadListDataItem");
         }
     }
 }
