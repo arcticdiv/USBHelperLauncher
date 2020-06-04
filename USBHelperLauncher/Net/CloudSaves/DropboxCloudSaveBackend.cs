@@ -23,7 +23,7 @@ namespace USBHelperLauncher.Net.CloudSaves
             {
                 if (_dropboxClient == null)
                 {
-                    InitializeClient(Settings.DropboxToken);
+                    InitializeClient(Credentials.DropboxToken);
                 }
                 return _dropboxClient;
             }
@@ -43,10 +43,10 @@ namespace USBHelperLauncher.Net.CloudSaves
             var token = await AuthorizationHandler.GetAccessToken();
             if (token != null)
             {
-                Settings.DropboxToken = token;
-                Settings.Save();
+                Credentials.DropboxToken = token;
+                Credentials.Save();
                 // reinitialize client with new token
-                InitializeClient(Settings.DropboxToken);
+                InitializeClient(Credentials.DropboxToken);
             }
         }
 

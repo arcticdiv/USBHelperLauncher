@@ -100,7 +100,9 @@
     <Compile Include="CheckboxDialog.Designer.cs">
       <DependentUpon>CheckboxDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\Credentials.cs" />
     <Compile Include="Configuration\Setting.cs" />
+    <Compile Include="Configuration\SettingsBase.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="DebugMessage.cs" />
     <Compile Include="Emulator\CemuConfiguration.cs" />

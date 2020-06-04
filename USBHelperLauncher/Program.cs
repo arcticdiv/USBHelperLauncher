@@ -53,6 +53,8 @@ namespace USBHelperLauncher
         {
             Settings.Load();
             Settings.Save();
+            Credentials.Load();
+            Credentials.Save();
             _handler += new EventHandler(Handler);
             SetConsoleCtrlHandler(_handler, true);
 
