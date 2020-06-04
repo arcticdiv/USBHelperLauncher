@@ -38,7 +38,7 @@ namespace USBHelperLauncher.Net.CloudSaves
             });
         }
 
-        public async Task Authorize()
+        private async Task Authorize()
         {
             var token = await AuthorizationHandler.GetAccessToken();
             if (token != null)
@@ -53,7 +53,16 @@ namespace USBHelperLauncher.Net.CloudSaves
 
         public async Task Login()
         {
-            await DropboxClient.Users.GetCurrentAccountAsync();
+            try
+            {
+                await DropboxClient.Users.GetCurrentAccountAsync();
+            }
+            catch (DropboxException)
+            {
+                // If an error occurred (no/invalid auth), authorize and retry
+                await Authorize();
+                await DropboxClient.Users.GetCurrentAccountAsync();
+            }
         }
 
         public async Task<List<CloudSaveListItem>> ListSaves()
