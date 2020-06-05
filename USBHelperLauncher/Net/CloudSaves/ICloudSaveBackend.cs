@@ -5,10 +5,8 @@ namespace USBHelperLauncher.Net.CloudSaves
 {
     interface ICloudSaveBackend
     {
-        // All these methods should never throw under normal operation, use Result.Failure instead
-
         /// <summary>
-        /// Returns .Success on successful login and .Failure otherwise
+        /// Returns nothing on successful login and throws an exception otherwise
         /// </summary>
         Task Login();
 
