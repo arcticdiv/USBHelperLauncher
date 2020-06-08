@@ -21,7 +21,7 @@ namespace USBHelperLauncher
         public void SendInjectorSettings()
         {
             Program.Logger.WriteLine("Sending information to injector...");
-            var factory = new ChannelFactory<IInjectorService>(new NetNamedPipeBinding(), "net.pipe://localhost/InjectorService");
+            var factory = new ChannelFactory<IInjectorService>(new NetNamedPipeBinding(""), "net.pipe://localhost/InjectorService");
             var channel = factory.CreateChannel();
             if (Program.OverridePublicKey)
             {
