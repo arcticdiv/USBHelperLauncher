@@ -22,6 +22,12 @@ namespace USBHelperLauncher.Net.CloudSaves
         public static string Username, Password;
 
 
+        // unused
+        public Task Authorize()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task Login()
         {
             var response = await Post("login.php");

@@ -6,6 +6,11 @@ namespace USBHelperLauncher.Net.CloudSaves
     interface ICloudSaveBackend
     {
         /// <summary>
+        /// Returns nothing on successful authorization and throws an exception otherwise
+        /// </summary>
+        Task Authorize();
+
+        /// <summary>
         /// Returns nothing on successful login and throws an exception otherwise
         /// </summary>
         Task Login();

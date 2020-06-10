@@ -79,6 +79,7 @@ namespace USBHelperLauncher.Net
 
         #region Cloud Saves
 
+        [Request("/saves/authorize.php")] // custom endpoint
         [Request("/saves/login.php")]
         [Request("/saves/list_saves.php")]
         [Request("/saves/get_save.php")]
@@ -86,7 +87,10 @@ namespace USBHelperLauncher.Net
         public void PostCloudGeneric(Session oS)
         {
             var data = GetRequestData(oS);
-            SetUSBHelperCloudAuth(data["username"], data["password"]);
+            if (oS.PathAndQuery != "/saves/authorize.php")
+            {
+                SetUSBHelperCloudAuth(data["username"], data["password"]);
+            }
 
             Task.Run(async () =>
             {
@@ -96,6 +100,11 @@ namespace USBHelperLauncher.Net
                 {
                     switch (oS.PathAndQuery)
                     {
+                        case "/saves/authorize.php":
+                        {
+                            await CloudSaveBackends.Current.Authorize();
+                            break;
+                        }
                         case "/saves/login.php":
                         {
                             await CloudSaveBackends.Current.Login();

@@ -5,6 +5,7 @@ using HarmonyLib;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text.RegularExpressions;
@@ -114,12 +115,48 @@ namespace USBHelperInjector.Patches
                                    select control).ToList();
             defaultControls.Remove(backendLabel);
             defaultControls.Remove(defaultControls.FindLast(c => c.GetType() == ReflectionHelper.TelerikUI.RadLabel));
-            defaultControls.Remove(defaultControls.FindLast(c => c.GetType() == ReflectionHelper.TelerikUI.RadButton));
+            var loginButton = defaultControls.FindLast(c => c.GetType() == ReflectionHelper.TelerikUI.RadButton);
+            defaultControls.Remove(loginButton);
 
             backendLabel.Text = $"Currently using {backendType.Description()} backend\n";
             var isUSBHelperBackend = backendType == CloudSaveBackendType.USBHelper;
             defaultControls.ForEach(c => c.Visible = isUSBHelperBackend);
             backendLabel.Visible = !isUSBHelperBackend;
+
+            loginButton.Text = isUSBHelperBackend ? "Log In/Register" : "Authorize";
+        }
+    }
+
+    [Optional]
+    [HarmonyPatch]
+    class CloudSaveLoginButtonPatch
+    {
+        static MethodBase TargetMethod()
+        {
+            var loginMethod = CloudSaveEmptyInputPatch.TargetMethod();
+            // v0.6.1.655: frmCloudSaving.radButton1_Click
+            return (from method in AccessTools.GetDeclaredMethods(ReflectionHelper.FrmCloudSaving)
+                    where method.GetParameters().Select(p => p.ParameterType)
+                        .SequenceEqual(new[] { typeof(object), typeof(EventArgs) })
+                    let instructions = PatchProcessor.GetOriginalInstructions(method, out _)
+                    where instructions.Any(i => i.opcode == OpCodes.Call && (MethodInfo)i.operand == loginMethod)
+                    select method).FirstOrDefault();
+        }
+
+        static bool Prefix(Form __instance)
+        {
+            if (InjectorService.CloudSaveBackend == CloudSaveBackendType.USBHelper)
+            {
+                return true;
+            }
+
+            // Authorize without blocking UI event loop
+            using (var client = new WebClient())
+            {
+                client.UploadStringAsync(new Uri("https://cloud.wiiuusbhelper.com/saves/authorize.php"), "");
+            }
+            __instance.Close();
+            return false;
         }
     }
 
