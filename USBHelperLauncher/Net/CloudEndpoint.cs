@@ -107,7 +107,7 @@ namespace USBHelperLauncher.Net
                         }
                         case "/saves/login.php":
                         {
-                            await CloudSaveBackends.Current.Login();
+                            await CloudSaveBackends.Current.CheckLogin();
                             oS.utilSetResponseBody("OK");
                             break;
                         }

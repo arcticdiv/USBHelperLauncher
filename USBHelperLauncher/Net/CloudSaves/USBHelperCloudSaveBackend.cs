@@ -28,7 +28,7 @@ namespace USBHelperLauncher.Net.CloudSaves
             throw new NotImplementedException();
         }
 
-        public async Task Login()
+        public async Task CheckLogin()
         {
             var response = await Post("login.php");
             var text = await response.Content.ReadAsStringAsync();

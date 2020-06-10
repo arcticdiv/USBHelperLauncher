@@ -51,7 +51,7 @@ namespace USBHelperLauncher.Net.CloudSaves
             }
         }
 
-        public async Task Login()
+        public async Task CheckLogin()
         {
             if (string.IsNullOrEmpty(Credentials.DropboxToken))
             {

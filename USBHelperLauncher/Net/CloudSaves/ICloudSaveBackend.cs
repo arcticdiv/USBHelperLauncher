@@ -13,7 +13,7 @@ namespace USBHelperLauncher.Net.CloudSaves
         /// <summary>
         /// Returns nothing on successful login and throws an exception otherwise
         /// </summary>
-        Task Login();
+        Task CheckLogin();
 
         /// <summary>
         /// Returns a list of cloud saves
