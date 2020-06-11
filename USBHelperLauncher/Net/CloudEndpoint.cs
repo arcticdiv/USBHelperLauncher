@@ -94,6 +94,7 @@ namespace USBHelperLauncher.Net
 
             Task.Run(async () =>
             {
+                Proxy.LogRequest(oS, this, "Handling request for " + oS.PathAndQuery);
                 oS.utilCreateResponseAndBypassServer();
 
                 try
@@ -168,8 +169,6 @@ namespace USBHelperLauncher.Net
                         default:
                             throw new ArgumentException("Unhandled request path");
                     }
-
-                    Proxy.LogRequest(oS, this, "Rewrote request for " + oS.PathAndQuery);
                 }
                 catch (Exception e)
                 {

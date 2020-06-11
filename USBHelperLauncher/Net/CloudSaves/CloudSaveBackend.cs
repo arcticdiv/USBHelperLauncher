@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace USBHelperLauncher.Net.CloudSaves
@@ -41,5 +42,16 @@ namespace USBHelperLauncher.Net.CloudSaves
         /// Deletes the save data for the given title ID
         /// </summary>
         public abstract Task DeleteSave(string titleId);
+
+
+        protected static bool IsValidFileName(string fileName)
+        {
+            return Regex.IsMatch(fileName, @"^[0-9A-Fa-f]{16}\.zip$");
+        }
+
+        protected static string FileNameForTitleId(string titleId)
+        {
+            return $"{titleId}.zip".ToLower();
+        }
     }
 }

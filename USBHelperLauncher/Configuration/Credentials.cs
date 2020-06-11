@@ -1,4 +1,6 @@
-﻿namespace USBHelperLauncher.Configuration
+﻿using System.Collections.Generic;
+
+namespace USBHelperLauncher.Configuration
 {
     public class Credentials : SettingsBase<Credentials>
     {
@@ -6,5 +8,11 @@
 
         [Setting("CloudSaves")]
         public static string DropboxToken { get; set; }
+
+        [Setting("CloudSaves")]
+        public static Dictionary<string, string> GoogleDriveData { get; set; } = new Dictionary<string, string>();
+
+        [Setting("CloudSaves")]
+        public static string GoogleDriveAppFolderId { get; set; }
     }
 }

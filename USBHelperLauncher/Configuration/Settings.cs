@@ -47,6 +47,9 @@ namespace USBHelperLauncher.Configuration
         [Setting("Launcher", CloudSaveBackendType.USBHelper)]
         public static CloudSaveBackendType CloudSaveBackend { get; set; }
 
+        [Setting("Launcher", "USBHelperLauncher")]
+        public static string GoogleDriveAppFolder { get; set; }
+
         [Setting("Launcher")]
         public static Dictionary<string, string> TitleKeys { get; set; } = new Dictionary<string, string>();
 
