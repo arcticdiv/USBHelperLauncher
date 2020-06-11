@@ -42,13 +42,10 @@ namespace USBHelperLauncher.Net.CloudSaves
         public override async Task Authorize()
         {
             var token = await AuthorizationHandler.GetAccessToken();
-            if (token != null)
-            {
-                Credentials.DropboxToken = token;
-                Credentials.Save();
-                // reinitialize client with new token
-                InitializeClient(Credentials.DropboxToken);
-            }
+            Credentials.DropboxToken = token;
+            Credentials.Save();
+            // reinitialize client with new token
+            InitializeClient(token);
         }
 
         public override async Task CheckLogin()
@@ -197,7 +194,7 @@ namespace USBHelperLauncher.Net.CloudSaves
                     else
                     {
                         SendResponse(context, "Error");
-                        return null;
+                        throw new Exception("Invalid state in token response");
                     }
                 }
                 catch
