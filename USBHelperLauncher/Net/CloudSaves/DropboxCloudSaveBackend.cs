@@ -69,7 +69,7 @@ namespace USBHelperLauncher.Net.CloudSaves
             }
 
             return (from item in items
-                    where item.IsFile && Regex.IsMatch(item.Name, @"^[0-9A-Fa-f]{16}\.zip$")
+                    where item.IsFile && IsValidFileName(item.Name)
                     let file = item.AsFile
                     select new CloudSaveListItem(
                         file.ContentHash,
@@ -83,7 +83,7 @@ namespace USBHelperLauncher.Net.CloudSaves
         {
             try
             {
-                var file = await DropboxClient.Files.GetMetadataAsync($"/{titleId}.zip") as FileMetadata;
+                var file = await DropboxClient.Files.GetMetadataAsync($"/{FileNameForTitleId(titleId)}") as FileMetadata;
                 return file?.ContentHash ?? "";
             }
             catch (ApiException<GetMetadataError> e) when (e.ErrorResponse.AsPath.Value.IsNotFound)
@@ -94,7 +94,7 @@ namespace USBHelperLauncher.Net.CloudSaves
 
         public override async Task<byte[]> GetSave(string titleId)
         {
-            var downloadResponse = await DropboxClient.Files.DownloadAsync($"/{titleId}.zip");
+            var downloadResponse = await DropboxClient.Files.DownloadAsync($"/{FileNameForTitleId(titleId)}");
             return await downloadResponse.GetContentAsByteArrayAsync();
         }
 
@@ -103,7 +103,7 @@ namespace USBHelperLauncher.Net.CloudSaves
             using (var stream = new MemoryStream(saveData))
             {
                 var file = await DropboxClient.Files.UploadAsync(
-                    $"/{titleId}.zip",
+                    $"/{FileNameForTitleId(titleId)}",
                     WriteMode.Overwrite.Instance,
                     body: stream
                 );
@@ -113,7 +113,7 @@ namespace USBHelperLauncher.Net.CloudSaves
 
         public override async Task DeleteSave(string titleId)
         {
-            await DropboxClient.Files.DeleteV2Async($"/{titleId}.zip");
+            await DropboxClient.Files.DeleteV2Async($"/{FileNameForTitleId(titleId)}");
         }
 
 
