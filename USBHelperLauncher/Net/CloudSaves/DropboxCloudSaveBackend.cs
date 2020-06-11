@@ -74,7 +74,7 @@ namespace USBHelperLauncher.Net.CloudSaves
                     select new CloudSaveListItem(
                         file.ContentHash,
                         Path.GetFileNameWithoutExtension(file.Name),
-                        (ulong)file.ServerModified.Subtract(new DateTime(1970, 1, 1)).TotalSeconds,
+                        (ulong)file.ServerModified.ToUniversalTime().Subtract(new DateTime(1970, 1, 1)).TotalSeconds,
                         file.Size
                     )).ToList();
         }
