@@ -6,14 +6,14 @@ namespace USBHelperLauncher.Net.CloudSaves
 {
     class CloudSaveBackends
     {
-        private static readonly Dictionary<CloudSaveBackendType, ICloudSaveBackend> _backends = new Dictionary<CloudSaveBackendType, ICloudSaveBackend>()
+        private static readonly Dictionary<CloudSaveBackendType, CloudSaveBackend> _backends = new Dictionary<CloudSaveBackendType, CloudSaveBackend>()
         {
             { CloudSaveBackendType.USBHelper, new USBHelperCloudSaveBackend() },
             { CloudSaveBackendType.Dropbox, new DropboxCloudSaveBackend() }
         };
 
-        public static ICloudSaveBackend Current => Get(Settings.CloudSaveBackend);
+        public static CloudSaveBackend Current => Get(Settings.CloudSaveBackend);
 
-        public static ICloudSaveBackend Get(CloudSaveBackendType type) => _backends[type];
+        public static CloudSaveBackend Get(CloudSaveBackendType type) => _backends[type];
     }
 }

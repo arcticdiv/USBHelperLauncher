@@ -13,7 +13,7 @@ using USBHelperLauncher.Properties;
 
 namespace USBHelperLauncher.Net.CloudSaves
 {
-    class DropboxCloudSaveBackend : ICloudSaveBackend
+    class DropboxCloudSaveBackend : CloudSaveBackend
     {
         private static DropboxClient _dropboxClient;
 
@@ -39,7 +39,7 @@ namespace USBHelperLauncher.Net.CloudSaves
         }
 
 
-        public async Task Authorize()
+        public override async Task Authorize()
         {
             var token = await AuthorizationHandler.GetAccessToken();
             if (token != null)
@@ -51,7 +51,7 @@ namespace USBHelperLauncher.Net.CloudSaves
             }
         }
 
-        public async Task CheckLogin()
+        public override async Task CheckLogin()
         {
             if (string.IsNullOrEmpty(Credentials.DropboxToken))
             {
@@ -60,7 +60,7 @@ namespace USBHelperLauncher.Net.CloudSaves
             await DropboxClient.Users.GetCurrentAccountAsync();
         }
 
-        public async Task<List<CloudSaveListItem>> ListSaves()
+        public override async Task<List<CloudSaveListItem>> ListSaves()
         {
             var items = new List<Metadata>();
             var listResult = await DropboxClient.Files.ListFolderAsync("");
@@ -82,7 +82,7 @@ namespace USBHelperLauncher.Net.CloudSaves
                     )).ToList();
         }
 
-        public async Task<string> GetSaveHash(string titleId)
+        public override async Task<string> GetSaveHash(string titleId)
         {
             try
             {
@@ -95,13 +95,13 @@ namespace USBHelperLauncher.Net.CloudSaves
             }
         }
 
-        public async Task<byte[]> GetSave(string titleId)
+        public override async Task<byte[]> GetSave(string titleId)
         {
             var downloadResponse = await DropboxClient.Files.DownloadAsync($"/{titleId}.zip");
             return await downloadResponse.GetContentAsByteArrayAsync();
         }
 
-        public async Task<string> UploadSave(string titleId, byte[] saveData)
+        public override async Task<string> UploadSave(string titleId, byte[] saveData)
         {
             using (var stream = new MemoryStream(saveData))
             {
@@ -114,7 +114,7 @@ namespace USBHelperLauncher.Net.CloudSaves
             }
         }
 
-        public async Task DeleteSave(string titleId)
+        public override async Task DeleteSave(string titleId)
         {
             await DropboxClient.Files.DeleteV2Async($"/{titleId}.zip");
         }

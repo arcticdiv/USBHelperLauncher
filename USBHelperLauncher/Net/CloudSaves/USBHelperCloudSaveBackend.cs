@@ -15,7 +15,7 @@ namespace USBHelperLauncher.Net.CloudSaves
         public USBHelperCloudSaveException(string message) : base(message) { }
     }
 
-    class USBHelperCloudSaveBackend : ICloudSaveBackend
+    class USBHelperCloudSaveBackend : CloudSaveBackend
     {
         private static HttpClient Client => CloudEndpoint.Client;
 
@@ -23,12 +23,12 @@ namespace USBHelperLauncher.Net.CloudSaves
 
 
         // unused
-        public Task Authorize()
+        public override Task Authorize()
         {
             throw new NotImplementedException();
         }
 
-        public async Task CheckLogin()
+        public override async Task CheckLogin()
         {
             var response = await Post("login.php");
             var text = await response.Content.ReadAsStringAsync();
@@ -38,7 +38,7 @@ namespace USBHelperLauncher.Net.CloudSaves
             }
         }
 
-        public async Task<List<CloudSaveListItem>> ListSaves()
+        public override async Task<List<CloudSaveListItem>> ListSaves()
         {
             var response = await Post("list_saves.php");
             var text = await response.Content.ReadAsStringAsync();
@@ -52,7 +52,7 @@ namespace USBHelperLauncher.Net.CloudSaves
                     )).ToList();
         }
 
-        public async Task<string> GetSaveHash(string titleId)
+        public override async Task<string> GetSaveHash(string titleId)
         {
             var response = await Post("get_save.php", new Dictionary<string, string>()
             {
@@ -74,7 +74,7 @@ namespace USBHelperLauncher.Net.CloudSaves
             return BitConverter.ToString(bytes).Replace("-", "");
         }
 
-        public async Task<byte[]> GetSave(string titleId)
+        public override async Task<byte[]> GetSave(string titleId)
         {
             var response = await Post("get_save.php", new Dictionary<string, string>()
             {
@@ -83,7 +83,7 @@ namespace USBHelperLauncher.Net.CloudSaves
             return await response.Content.ReadAsByteArrayAsync();
         }
 
-        public async Task<string> UploadSave(string titleId, byte[] saveData)
+        public override async Task<string> UploadSave(string titleId, byte[] saveData)
         {
             var content = new MultipartFormDataContent
             {
@@ -104,7 +104,7 @@ namespace USBHelperLauncher.Net.CloudSaves
             return BitConverter.ToString(hash).Replace("-", "");
         }
 
-        public async Task DeleteSave(string titleId)
+        public override async Task DeleteSave(string titleId)
         {
             var response = await Post("delete_save.php", new Dictionary<string, string>()
             {
