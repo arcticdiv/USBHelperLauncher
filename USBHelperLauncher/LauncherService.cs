@@ -16,11 +16,13 @@ namespace USBHelperLauncher
         public void SetCloudSaveBackend(CloudSaveBackendType backend)
         {
             Settings.CloudSaveBackend = backend;
+            Settings.Save();
         }
 
         public void SetLocalCloudSavePath(string path)
         {
             Settings.LocalCloudSaveFolder = path;
+            Settings.Save();
         }
 
         public void SendInjectorSettings()
