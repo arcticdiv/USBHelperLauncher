@@ -124,41 +124,29 @@ namespace USBHelperLauncher.Net.CloudSaves
             private static readonly Uri _redirectUri = new Uri(new Uri(_localHost), "authorize");
             private static readonly Uri _jsRedirectUri = new Uri(new Uri(_localHost), "token");
 
-            private static Task<string> _currentTask;
-
 
             public static async Task<string> GetAccessToken()
             {
-                // avoid going through the OAuth flow multiple times simultaneously
-                if (_currentTask == null)
+                Console.WriteLine("[Dropbox] Getting access token...");
+                var guid = Guid.NewGuid().ToString("N");
+                var authUri = DropboxOAuth2Helper.GetAuthorizeUri(
+                    OAuthResponseType.Token,
+                    _appKey,
+                    _redirectUri,
+                    guid
+                );
+
+                using (var listener = new HttpListener())
                 {
-                    _currentTask = Task.Run(async () =>
-                    {
-                        Console.WriteLine("[Dropbox] Getting access token...");
-                        var guid = Guid.NewGuid().ToString("N");
-                        var authUri = DropboxOAuth2Helper.GetAuthorizeUri(
-                            OAuthResponseType.Token,
-                            _appKey,
-                            _redirectUri,
-                            guid
-                        );
+                    listener.Prefixes.Add(_localHost);
+                    listener.Start();
+                    Process.Start(authUri.ToString());
 
-                        using (var listener = new HttpListener())
-                        {
-                            listener.Prefixes.Add(_localHost);
-                            listener.Start();
-                            Process.Start(authUri.ToString());
+                    var response = await HandleOAuth2Redirect(listener, guid);
+                    Console.WriteLine($"[Dropbox] {(response != null ? "OK" : "Error")}");
 
-                            var response = await HandleOAuth2Redirect(listener, guid);
-                            Console.WriteLine($"[Dropbox] {(response != null ? "OK" : "Error")}");
-
-                            _currentTask = null; // unset currentTask once finished
-                            return response?.AccessToken;
-                        }
-                    });
+                    return response?.AccessToken;
                 }
-
-                return await _currentTask;
             }
 
             private static async Task<OAuth2Response> HandleOAuth2Redirect(HttpListener listener, string state)
