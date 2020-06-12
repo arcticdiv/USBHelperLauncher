@@ -81,23 +81,6 @@ namespace USBHelperLauncher.Properties {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a &lt;html&gt;
-        ///&lt;script type=&quot;text/javascript&quot;&gt;
-        ///    function redirect() {
-        ///        // Append fragment as query string so that server can receive it.
-        ///        document.location.href = &quot;/token?url_with_fragment=&quot; + encodeURIComponent(document.location.href);
-        ///    }
-        ///&lt;/script&gt;
-        ///&lt;body onload=&quot;redirect()&quot;/&gt;
-        ///&lt;/html&gt;.
-        /// </summary>
-        internal static string DropboxJSRedirect {
-            get {
-                return ResourceManager.GetString("DropboxJSRedirect", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Busca un recurso adaptado de tipo System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Loading {

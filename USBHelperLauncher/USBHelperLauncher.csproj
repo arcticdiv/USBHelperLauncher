@@ -208,7 +208,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\DropboxJSRedirect.html" />
     <None Include="emulators\meta.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

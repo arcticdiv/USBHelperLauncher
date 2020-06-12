@@ -8,7 +8,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using USBHelperLauncher.Configuration;
-using USBHelperLauncher.Properties;
 
 namespace USBHelperLauncher.Net.CloudSaves
 {
@@ -173,7 +172,17 @@ namespace USBHelperLauncher.Net.CloudSaves
                 Console.WriteLine("[Dropbox] Got /authorize request");
 
                 // serve JS redirect to get token from url fragment
-                SendResponse(context, Resources.DropboxJSRedirect, "text/html");
+                const string jsRedirect = @"
+                    <html>
+                    <script type=""text/javascript"">
+                        function redirect() {
+                            // Append fragment as query string so that server can receive it.
+                            document.location.href = ""/token?url_with_fragment="" + encodeURIComponent(document.location.href);
+                        }
+                    </script>
+                    <body onload=""redirect()""/>
+                    </html>";
+                SendResponse(context, jsRedirect, "text/html");
 
                 // wait for JS redirection
                 do
