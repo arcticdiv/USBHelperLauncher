@@ -293,8 +293,8 @@ namespace USBHelperLauncher.Net.CloudSaves
 
         private static class AuthorizationHandler
         {
-            private const string _clientID = "";
-            private const string _clientSecret = "";
+            private const string _clientID = "246178425841-fav7slejb7aqt2voc6phtm4f3t4cqj6c.apps.googleusercontent.com";
+            private static readonly string _clientSecret = new Secret("f8PcWHMpEcWhD9K4v7cJGiYUbxpHoUlOra1muh2t9QU=").Value;
 
             public static readonly AuthorizationCodeFlow Flow = new GoogleAuthorizationCodeFlow(
                 new GoogleAuthorizationCodeFlow.Initializer

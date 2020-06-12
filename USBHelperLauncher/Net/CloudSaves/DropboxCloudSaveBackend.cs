@@ -117,7 +117,7 @@ namespace USBHelperLauncher.Net.CloudSaves
 
         private static class AuthorizationHandler
         {
-            private static readonly string _appKey = "ze6nrgrrhbr255d";
+            private static readonly string _appKey = new Secret("8wY+LmydWlaDdwCiaKoZiA==").Value;
 
             private const int _localPort = 53482;
             private static readonly string _localHost = $"http://127.0.0.1:{_localPort}/";

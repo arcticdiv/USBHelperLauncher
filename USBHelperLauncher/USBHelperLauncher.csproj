@@ -148,6 +148,7 @@
     <Compile Include="ModuleInitInjector.cs" />
     <Compile Include="Net\CloudSaves\GoogleDriveCloudSaveBackend.cs" />
     <Compile Include="Net\CloudSaves\LocalCloudSaveBackend.cs" />
+    <Compile Include="Secret.cs" />
     <Compile Include="Utils\MOTD.cs" />
     <Compile Include="Net\CloudEndpoint.cs" />
     <Compile Include="Net\CloudSaves\CloudSaveBackends.cs" />
