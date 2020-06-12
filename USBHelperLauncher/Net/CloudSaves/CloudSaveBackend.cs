@@ -51,7 +51,7 @@ namespace USBHelperLauncher.Net.CloudSaves
 
         protected static string FileNameForTitleId(string titleId)
         {
-            return $"{titleId}.zip".ToLower();
+            return $"{titleId}.zip".ToLowerInvariant();
         }
     }
 }
