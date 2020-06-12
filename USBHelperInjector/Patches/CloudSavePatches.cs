@@ -149,6 +149,14 @@ namespace USBHelperInjector.Patches
             {
                 return true;
             }
+            if (InjectorService.CloudSaveBackend == CloudSaveBackendType.Local)
+            {
+                var dialog = new FolderBrowserDialog();
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    InjectorService.LauncherService.SetLocalCloudSavePath(dialog.SelectedPath);
+                }
+            }
 
             // Authorize without blocking UI event loop
             using (var client = new WebClient())

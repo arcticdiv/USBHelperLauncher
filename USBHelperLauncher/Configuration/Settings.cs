@@ -51,6 +51,9 @@ namespace USBHelperLauncher.Configuration
         public static string GoogleDriveAppFolder { get; set; }
 
         [Setting("Launcher")]
+        public static string LocalCloudSaveFolder { get; set; }
+
+        [Setting("Launcher")]
         public static Dictionary<string, string> TitleKeys { get; set; } = new Dictionary<string, string>();
 
         [Setting("Injector", false)]

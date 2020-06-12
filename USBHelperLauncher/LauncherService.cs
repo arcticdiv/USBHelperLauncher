@@ -18,6 +18,11 @@ namespace USBHelperLauncher
             Settings.CloudSaveBackend = backend;
         }
 
+        public void SetLocalCloudSavePath(string path)
+        {
+            Settings.LocalCloudSaveFolder = path;
+        }
+
         public void SendInjectorSettings()
         {
             Program.Logger.WriteLine("Sending information to injector...");

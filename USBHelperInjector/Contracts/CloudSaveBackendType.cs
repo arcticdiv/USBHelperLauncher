@@ -6,7 +6,8 @@ namespace USBHelperInjector.Contracts
     {
         USBHelper,
         Dropbox,
-        GoogleDrive
+        GoogleDrive,
+        Local
     }
 
     public static class CloudSaveBackendTypeStrings
@@ -21,6 +22,8 @@ namespace USBHelperInjector.Contracts
                     return "Dropbox";
                 case CloudSaveBackendType.GoogleDrive:
                     return "Google Drive";
+                case CloudSaveBackendType.Local:
+                    return "Local";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(backend));
             }

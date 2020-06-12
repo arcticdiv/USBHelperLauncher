@@ -10,9 +10,12 @@ namespace USBHelperInjector.Contracts
         void SetKeySite(string site, string url);
 
         [OperationContract]
-        void SendInjectorSettings();
+        void SetCloudSaveBackend(CloudSaveBackendType backend);
 
         [OperationContract]
-        void SetCloudSaveBackend(CloudSaveBackendType backend);
+        void SetLocalCloudSavePath(string path);
+
+        [OperationContract]
+        void SendInjectorSettings();
     }
 }

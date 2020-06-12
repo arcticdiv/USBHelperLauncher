@@ -10,7 +10,8 @@ namespace USBHelperLauncher.Net.CloudSaves
         {
             { CloudSaveBackendType.USBHelper, new USBHelperCloudSaveBackend() },
             { CloudSaveBackendType.Dropbox, new DropboxCloudSaveBackend() },
-            { CloudSaveBackendType.GoogleDrive, new GoogleDriveCloudSaveBackend() }
+            { CloudSaveBackendType.GoogleDrive, new GoogleDriveCloudSaveBackend() },
+            { CloudSaveBackendType.Local, new LocalCloudSaveBackend() }
         };
 
         public static CloudSaveBackend Current => Get(Settings.CloudSaveBackend);
