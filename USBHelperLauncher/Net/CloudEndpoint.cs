@@ -79,6 +79,10 @@ namespace USBHelperLauncher.Net
 
         #region Cloud Saves
 
+        // For reference:
+        //   Observations about USB Helper's behaviour with different responses and/or status codes
+        //   https://gist.github.com/shiftinv/394fcafe0fd9ebc61a8eb0207c56b74b
+
         [Request("/saves/authorize.php")] // custom endpoint
         [Request("/saves/login.php")]
         [Request("/saves/list_saves.php")]
