@@ -76,5 +76,8 @@ namespace USBHelperLauncher.Configuration
 
         [Setting("Injector", false)]
         public static bool NoFunAllowed { get; set; }
+        
+        [Setting("Injector", true)]
+        public static bool SplitUnpackDirectories { get; set; }
     }
 }

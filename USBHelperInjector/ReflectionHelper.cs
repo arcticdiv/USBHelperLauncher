@@ -53,7 +53,6 @@ namespace USBHelperInjector
                        where type.GetProperty("FileLocationWiiU") != null
                        select type).FirstOrDefault()
             );
-
             public static Type Type => _type.Value;
 
             private static readonly Lazy<MethodInfo> _okButtonHandler = new Lazy<MethodInfo>(
@@ -63,7 +62,6 @@ namespace USBHelperInjector
                           && instructions.Any(x => x.opcode == OpCodes.Ldfld && ((FieldInfo)x.operand).FieldType == TelerikUI.RadTextBox)
                        select method).FirstOrDefault()
             );
-
             public static MethodInfo OkButtonHandler => _okButtonHandler.Value;
 
             private static readonly Lazy<List<FieldInfo>> _textBoxes = new Lazy<List<FieldInfo>>(
@@ -73,7 +71,6 @@ namespace USBHelperInjector
                        where field.FieldType == TelerikUI.RadTextBox
                        select field).ToList()
             );
-
             public static List<FieldInfo> TextBoxes => _textBoxes.Value;
         }
 
@@ -86,6 +83,27 @@ namespace USBHelperInjector
                     let target = (MethodBase)instruction.operand
                     where target.DeclaringType == type && target.GetParameters().Length == 0
                     select (MethodInfo)target).FirstOrDefault();
+        }
+        
+
+        public static class TitleTypes
+        {
+            private static readonly Lazy<Type> _game = new Lazy<Type>(
+                () => (from type in Types
+                       where type.GetProperty("Dlc", BindingFlags.Public | BindingFlags.Instance) != null
+                       select type).FirstOrDefault()
+            );
+            public static Type Game => _game.Value;
+
+            private static readonly Lazy<Type> _update = new Lazy<Type>(
+                () => Game.GetProperty("Updates", BindingFlags.Public | BindingFlags.Instance).PropertyType.GenericTypeArguments[0]
+            );
+            public static Type Update => _update.Value;
+
+            private static readonly Lazy<Type> _dlc = new Lazy<Type>(
+                () => Game.GetProperty("Dlc", BindingFlags.Public | BindingFlags.Instance).PropertyType
+            );
+            public static Type Dlc => _dlc.Value;
         }
 
 

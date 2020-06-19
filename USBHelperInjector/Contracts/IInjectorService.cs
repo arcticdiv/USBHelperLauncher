@@ -51,6 +51,9 @@ namespace USBHelperInjector.Contracts
         void SetEshopRegion(string eshopRegion);
 
         [OperationContract]
+        void SetSplitUnpackDirectories(bool splitUnpackDirectories);
+
+        [OperationContract]
         void SetCloudSaveBackend(CloudSaveBackendType backend);
     }
 }
