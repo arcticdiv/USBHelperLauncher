@@ -72,6 +72,7 @@
     <Compile Include="Patches\Attributes\Optional.cs" />
     <Compile Include="Overrides.cs" />
     <Compile Include="Patches\Attributes\WineOnly.cs" />
+    <Compile Include="Patches\CemuMlcPatch.cs" />
     <Compile Include="Patches\CemuPathPatches.cs" />
     <Compile Include="Patches\CommandLineArgsPatch.cs" />
     <Compile Include="Patches\Disable3DSDownload.cs" />
