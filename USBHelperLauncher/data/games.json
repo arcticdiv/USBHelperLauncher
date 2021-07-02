@@ -36411,5 +36411,83 @@
     "PreLoad": false,
     "Version": "",
     "DiscOnly": false
+  },
+  {
+    "EshopId": "20010000028808",
+    "IconUrl": "https:\/\/kanzashi-wup.cdn.nintendo.net\/i\/9550438280159d430867d49d68d52025c9bc4fed8d4ce6fb18c76416cf9a4524.jpg",
+    "Name": "Seasonal Assistant",
+    "Platform": 124,
+    "ProductCode": "AV5P",
+    "Region": "EUR",
+    "Size": "80347296",
+    "TitleId": "000500001021C100",
+    "PreLoad": false,
+    "Version": "",
+    "DiscOnly": false
+  },
+  {
+    "EshopId": "20010000028788",
+    "IconUrl": "https:\/\/kanzashi-wup.cdn.nintendo.net\/i\/4610a4e0ef9cc8ed5a975f692ee57b538ac3e78aa5237a32722c691d10851c8a.jpg",
+    "Name": "Commander Keen in Keen Dreams: Definitive Edition",
+    "Platform": 124,
+    "ProductCode": "AN7P",
+    "Region": "EUR",
+    "Size": "138444940",
+    "TitleId": "000500001021AE00",
+    "PreLoad": false,
+    "Version": "",
+    "DiscOnly": false
+  },
+  {
+    "EshopId": "20010000028768",
+    "IconUrl": "https:\/\/kanzashi-wup.cdn.nintendo.net\/i\/9550438280159d430867d49d68d52025c9bc4fed8d4ce6fb18c76416cf9a4524.jpg",
+    "Name": "Seasonal Assistant",
+    "Platform": 124,
+    "ProductCode": "AV5E",
+    "Region": "USA",
+    "Size": "78053536",
+    "TitleId": "000500001021C000",
+    "PreLoad": false,
+    "Version": "",
+    "DiscOnly": false
+  },
+  {
+    "EshopId": "20010000028708",
+    "IconUrl": "https:\/\/kanzashi-wup.cdn.nintendo.net\/i\/5c54b03fadffcb7e062ffcd70130ef7a07528642787584c89f852c4b103a41a2.jpg",
+    "Name": "Shakedown: Hawaii",
+    "Platform": 125,
+    "ProductCode": "WTBE",
+    "Region": "USA",
+    "Size": "89292940",
+    "TitleId": "000500001021AA00",
+    "PreLoad": false,
+    "Version": "",
+    "DiscOnly": false
+  },
+  {
+    "EshopId": "20010000028688",
+    "IconUrl": "https:\/\/kanzashi-wup.cdn.nintendo.net\/i\/653d4ac2d65ecab004545da5d16c685f7ad73140b1daa57ba7c2f843ad035acc.jpg",
+    "Name": "Dying is Dangerous",
+    "Platform": 124,
+    "ProductCode": "ADJE",
+    "Region": "USA",
+    "Size": "453247136",
+    "TitleId": "00050000101BCC00",
+    "PreLoad": false,
+    "Version": "",
+    "DiscOnly": false
+  },
+  {
+    "EshopId": "20010000026549",
+    "IconUrl": "https:\/\/kanzashi-wup.cdn.nintendo.net\/i\/7c426a1c00c21214cfff855bc384ace7b5629f705222ead51fa275794e0c0a05.jpg",
+    "Name": "Toon War",
+    "Platform": 124,
+    "ProductCode": "AW8E",
+    "Region": "USA",
+    "Size": "1917878552",
+    "TitleId": "000500001020CB00",
+    "PreLoad": false,
+    "Version": "",
+    "DiscOnly": false
   }
 ]
