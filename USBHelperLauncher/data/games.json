@@ -36489,5 +36489,31 @@
     "PreLoad": false,
     "Version": "",
     "DiscOnly": false
+  },
+  {
+    "EshopId": "20010000028848",
+    "IconUrl": "https:\/\/kanzashi-wup.cdn.nintendo.net\/i\/54b52e89cc68fe1df080bc7d2f3e36dcf0f40cf51ed8126f8a2bef13283e9021.jpg",
+    "Name": "SturmFront - The Mutant War\n\u00dcbel Edition",
+    "Platform": 124,
+    "ProductCode": "WT9P",
+    "Region": "EUR",
+    "Size": "868778184",
+    "TitleId": "000500001021C500",
+    "PreLoad": false,
+    "Version": "",
+    "DiscOnly": false
+  },
+  {
+    "EshopId": "20010000028828",
+    "IconUrl": "https:\/\/kanzashi-wup.cdn.nintendo.net\/i\/54b52e89cc68fe1df080bc7d2f3e36dcf0f40cf51ed8126f8a2bef13283e9021.jpg",
+    "Name": "SturmFront - The Mutant War",
+    "Platform": 124,
+    "ProductCode": "AN5E",
+    "Region": "USA",
+    "Size": "868778184",
+    "TitleId": "000500001021C300",
+    "PreLoad": false,
+    "Version": "",
+    "DiscOnly": false
   }
 ]

@@ -79935,5 +79935,31 @@
     "PreLoad": false,
     "Version": "",
     "DiscOnly": false
+  },
+  {
+    "EshopId": "50010000049135",
+    "IconUrl": "https:\/\/kanzashi-wup.cdn.nintendo.net\/i\/63cb845db417bed8212d586df49d41c0640e77ff5735ed58a378148be32c0eb5.jpg",
+    "Name": "Flying Axe",
+    "Platform": 19,
+    "ProductCode": "B95E",
+    "Region": "USA",
+    "Size": "41225060",
+    "TitleId": "00040000001DE800",
+    "PreLoad": false,
+    "Version": "",
+    "DiscOnly": false
+  },
+  {
+    "EshopId": "50010000049175",
+    "IconUrl": "https:\/\/kanzashi-wup.cdn.nintendo.net\/i\/3c424196a57a801f252fb3c2172e98144fed77b89b782493295c2968e19e6261.jpg",
+    "Name": "Harold Reborn",
+    "Platform": 1001,
+    "ProductCode": "CE3E",
+    "Region": "USA",
+    "Size": "80591716",
+    "TitleId": "000400000F714900",
+    "PreLoad": false,
+    "Version": "",
+    "DiscOnly": false
   }
 ]
